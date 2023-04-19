@@ -12,8 +12,7 @@ https://github.com/luizpaulogroup/react-native-tiktok
 - adb connect 127.0.0.1:21503
 - adb connect 0802937239009815
 
-- adb tcpip 5555
-- Unplug USB cap -> adb connect IP_WIFI:5555
+- adb tcpip 5555 -> Unplug USB cap -> adb connect IP_WIFI:5555
 
 - keytool -genkey -v -keystore my-app-key.keystore -alias my-app-alias -keyalg RSA -keysize 2048 -validity 10000
 - cd android && ./gradlew assembleRelease

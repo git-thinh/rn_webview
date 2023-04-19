@@ -2,6 +2,7 @@
 
 import React, { Component } from "react";
 import { View, PanResponder } from "react-native";
+import myEmitter from './EventEmitter.js';
 
 export const swipeDirections = {
   SWIPE_UP: "SWIPE_UP",
@@ -121,11 +122,10 @@ class GestureRecognizer extends Component {
   }
 	
   _onTouchEnd() {
-		console.log('_onTouchEnd = ', _isClick)
-    const {
-      tab
-    } = this.props;
-		tab && tab();
+    if(_isClick) {
+			//console.log('_onTouchEnd = ', _isClick)
+			myEmitter.emit('TAB', '');
+		}
   }
 
   render() {

@@ -11,7 +11,10 @@ import {
 } from "native-base";
 
 import { WebView } from 'react-native-webview';
-import GestureRecognizer, {swipeDirections} from './src/swipe-gestures.js';
+import GestureRecognizer, {swipeDirections} from './src/SwipeGestures.js';
+
+import {EventEmitter} from 'events';
+import myEmitter from './src/EventEmitter.js';
 
 const HOST = 'http://192.168.1.50'
 		
@@ -19,7 +22,7 @@ export default class App extends React.Component {
 	constructor(props) {
 		super(props);
 		
-		this.state = {
+		this.state = {			
 			html: `<style type="text/css">body {background-color: #000;}</style>`,
 			originWhitelist: ['*'],
 			sharedCookiesEnabled: true,
@@ -28,26 +31,48 @@ export default class App extends React.Component {
 			injectedJSBeforeLoaded: '',
 			injectedJS: '',
 			
-			gestureName: '',
-		};
-	
+			eventName: '',
+		};	
 	}	
+		
+	onTab(){
+		const eventName = 'TAB';		
+		this.setState({eventName: eventName});
+		this.webref.injectJavaScript(`if(window['__onEVENT'])window['__onEVENT']('${eventName}');true;`);		
+	}
+	
+	loadHtml = (callback) => {
+		const self = this;
+		const time = '?_=' + new Date().getTime().toString();
+		fetch(`${HOST}/test.html`+time).then(r=>r.text()).then(html=>{
+			fetch(`${HOST}/test.js`+time).then(r=>r.text()).then(js=>{
+				fetch(`${HOST}/test.css`+time).then(r=>r.text()).then(css=>{
+					const data = '<style type="text/css">'+css+'</style>' + 
+						html + 
+						'<script>'+js+'</script>';
+					self.setState({html:data});
+					if(callback) callback();
+				})
+			})
+		})
+	}
 	
 	componentDidMount() {
+		const self = this;
 		StatusBar.setHidden(true);
-		this.loadHtml();
+				
+		this.loadHtml(()=>{
+			//const countEmitter = EventEmitter.listenerCount(myEmitter, 'TAB');
+			myEmitter.on('TAB', ()=>self.onTab());
+		});
+	}
+		
+	onSwipe(eventName, gestureState) {
+		const {SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT} = swipeDirections;
+		this.setState({eventName: eventName});		
+		this.webref.injectJavaScript(`if(window['__onEVENT'])window['__onEVENT']('${eventName}');true;`);
 	}
 	
-	onSwipe(gestureName, gestureState) {
-		const {SWIPE_UP, SWIPE_DOWN, SWIPE_LEFT, SWIPE_RIGHT} = swipeDirections;
-		this.setState({gestureName: gestureName});		
-		this.webref.injectJavaScript(`if(window['__onSWIPE'])window['__onSWIPE']('${gestureName}');true;`);
-	}
-	onTab() {
-		const gestureName = 'TAB';
-		this.setState({gestureName: gestureName});		
-		this.webref.injectJavaScript(`if(window['__onSWIPE'])window['__onSWIPE']('${gestureName}');true;`);
-	}
 		
 	render(){		
     const config = {
@@ -88,29 +113,14 @@ export default class App extends React.Component {
 						tab={this.onTab}
 						config={config}
 						style={styles.gestureRecognizer}>
-						<Button style={styles.loadHtml} onPress={this.loadHtml}>R</Button>
-						<Text>{this.state.gestureName}</Text>
+						<Button style={styles.loadHtml} onPress={()=>this.loadHtml(null)}>R</Button>
+						<Text>{this.state.eventName}</Text>
 					</GestureRecognizer>
 				</Box>
 			</NativeBaseProvider>
 		);
 	}
 	
-	loadHtml = () => {
-		console.log('LOAD_HTML....');
-		const self = this;
-		const time = '?_=' + new Date().getTime().toString();
-		fetch(`${HOST}/test.html`+time).then(r=>r.text()).then(html=>{
-			fetch(`${HOST}/test.js`+time).then(r=>r.text()).then(js=>{
-				fetch(`${HOST}/test.css`+time).then(r=>r.text()).then(css=>{
-					const data = '<style type="text/css">'+css+'</style>' + 
-						html + 
-						'<script>'+js+'</script>';
-					self.setState({html:data});
-				})
-			})
-		})
-	}
 	
 	////////////////////////////////////////////////////////////////////////////////
 	testPress = () => {		
