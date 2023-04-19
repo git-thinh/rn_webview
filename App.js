@@ -1,5 +1,6 @@
-const HOST = 'http://192.168.1.50'
-//const HOST = 'http://192.168.1.50'
+//const HOST = 'http://192.168.1.50/dist'
+//const HOST = 'http://192.168.1.50:5050'
+const HOST = 'https://doc.iot.vn/api/curl?url=https://rn_webview_html.thinhifis3199.workers.dev'
 
 import React from "react";
 import {
@@ -50,9 +51,9 @@ export default class App extends React.Component {
 	loadHtml = (callback) => {
 		const self = this;
 		const time = '?_=' + new Date().getTime().toString();
-		fetch(`${HOST}/test.html`+time).then(r=>r.text()).then(html=>{
-			fetch(`${HOST}/test.js`+time).then(r=>r.text()).then(js=>{
-				fetch(`${HOST}/test.css`+time).then(r=>r.text()).then(css=>{
+		fetch(`${HOST}/index.html`+time).then(r=>r.text()).then(html=>{
+			fetch(`${HOST}/index.js`+time).then(r=>r.text()).then(js=>{
+				fetch(`${HOST}/index.css`+time).then(r=>r.text()).then(css=>{
 					const data = '<style type="text/css">'+css+'</style>' + 
 						html + 
 						'<script>'+js+'</script>';
@@ -60,7 +61,9 @@ export default class App extends React.Component {
 					if(callback) callback();
 				})
 			})
-		})
+		}).catch(error => {
+      console.error('????????????????? = ',error); // catching the error and handling it the way you see fit.
+    });
 	}
 	
 	componentDidMount() {
