@@ -1,3 +1,6 @@
+const HOST = 'http://192.168.1.50'
+//const HOST = 'http://192.168.1.50'
+
 import React from "react";
 import {
 	StatusBar,
@@ -20,8 +23,6 @@ import GestureRecognizer, {swipeDirections} from './src/SwipeGestures.js';
 
 import {EventEmitter} from 'events';
 import myEmitter from './src/EventEmitter.js';
-
-const HOST = 'http://192.168.1.50'
 		
 export default class App extends React.Component {	
 	constructor(props) {
