@@ -10,6 +10,11 @@ import {
 	Text,
 } from "native-base";
 
+import DocumentPicker, {
+	types
+} from 'react-native-document-picker';
+import RNFS from 'react-native-fs';
+
 import { WebView } from 'react-native-webview';
 import GestureRecognizer, {swipeDirections} from './src/SwipeGestures.js';
 
@@ -73,7 +78,47 @@ export default class App extends React.Component {
 		this.webref.injectJavaScript(`if(window['__onEVENT'])window['__onEVENT']('${eventName}');true;`);
 	}
 	
-		
+	onWebviewMessage = (msgEvent) => {	
+		const s = msgEvent.nativeEvent.data;
+		console.log(`JS: message = `,s);
+		switch(s){
+			case 'FILE_BROWSER':
+				this.fileBrowser((a)=>{				
+					if (a && a.length > 0) {
+						console.log('FILES = ',a);
+						const files = a.map(r=>r.uri).join('^');
+						this.webref.injectJavaScript(`if(window['__onEVENT'])window['__onEVENT']('FILE_BROWSER','${files}');true;`);
+					}
+				});
+			break;
+		}
+	}	
+	
+	////////////////////////////////////////////////////////////////////////////////
+	
+	fileBrowser(callback) {
+		DocumentPicker.pick({
+			allowMultiSelection: true,
+			type: [types.allFiles],
+			//type: [types.audio, types.video],
+		}).then((a) => {
+			callback(a);
+		}).catch((err) => {
+			// Handling Exception
+			if (DocumentPicker.isCancel(err)) {
+				// If user canceled the document selection
+				console.log('ERROR: Canceled');
+				callback([]);
+			} else {
+				// For Unknown Error
+				console.log('ERROR: Unknown Error = ' + JSON.stringify(err));
+				//throw err;
+				callback(null);
+			}
+		})
+	};
+	
+	////////////////////////////////////////////////////////////////////////////////
 	render(){		
     const config = {
       velocityThreshold: 0.3,
@@ -87,7 +132,10 @@ export default class App extends React.Component {
 						//renderLoading={LoadingSpinner}
 						
 						ref={(r) => (this.webref = r)}
-						source={{ html: this.state.html}}
+						source={{ 
+							html: this.state.html,
+							baseUrl: 'http://localhost'
+						}}
 						
 						sharedCookiesEnabled={true}
 						allowUniversalAccessFromFileURLs={true}
@@ -134,10 +182,6 @@ export default class App extends React.Component {
 		this.webref.injectJavaScript(js);
 	}
 		
-	onWebviewMessage = (msgEvent) => {	
-		const s = msgEvent.nativeEvent.data;
-		console.log(`MSG: `,s);
-	}	
 }
 
 const styles = StyleSheet.create({
