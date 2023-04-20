@@ -133,7 +133,9 @@ export default class App extends React.Component {
 						ref={(r) => (this.webref = r)}
 						source={{ 
 							html: this.state.html,
-							baseUrl: 'http://localhost'
+							baseUrl: 'http://localhost',
+							//headers: { 'my-custom-header-key': 'my-custom-header-value',},
+							//headers: { Cookie: 'cookie1=asdf; cookie2=dfasdfdas', },
 						}}
 						originWhitelist={["*"]}
 						
@@ -199,6 +201,7 @@ const styles = StyleSheet.create({
 		height: '100%',
   },
   webview: {
+		backgroundColor: '#000',
   },
   loadHtml: {
 		width: 32,
