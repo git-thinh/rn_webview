@@ -163,7 +163,7 @@ export default class App extends React.Component {
 						
 						style={styles.webview}
 					/>
-					<Button style={styles.button} onPress={this.testPress}>Test</Button>
+					<Button style={styles.button} onPress={()=>this.loadHtml(null)}>Reload</Button>
 					<GestureRecognizer
 						onSwipe={(direction, state) => this.onSwipe(direction, state)}
 						tab={this.onTab}
@@ -209,7 +209,8 @@ const styles = StyleSheet.create({
 		left: 0,
 		right: 70,
 		bottom: 0,
-		//backgroundColor: 'red'
+		//backgroundColor: 'red',
+		display: 'none',
 	},
 	button: {
 		position: 'absolute',
@@ -217,6 +218,6 @@ const styles = StyleSheet.create({
 		left: 0,
 		right: 0,
 		bottom: 10,
-		display: 'none',
+		//display: 'none',
 	}
 });
