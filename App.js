@@ -1,4 +1,5 @@
-const HOST = 'http://192.168.1.50'
+//const HOST = 'http://192.168.1.50'
+const HOST = 'http://chuphucben'
 //const HOST = 'http://192.168.1.50:5050'
 //const HOST = 'https://doc.iot.vn/api/curl?url=https://rn_webview_html.thinhifis3199.workers.dev'
 
@@ -31,8 +32,6 @@ export default class App extends React.Component {
 		
 		this.state = {			
 			html: `<style type="text/css">body {background-color: #000;}</style>`,
-			originWhitelist: ['*'],
-			sharedCookiesEnabled: true,
 			
 			userAgent: '',
 			injectedJSBeforeLoaded: `window.__isMobiApp=true;window.__host='${HOST}';true;`,
@@ -53,7 +52,8 @@ export default class App extends React.Component {
 		const time = '?_=' + new Date().getTime().toString();
 		fetch(`${HOST}/index.html`+time).then(r1=>r1.text()).then(html=>{
 			fetch(`${HOST}/app.js`+time).then(r2=>r2.text()).then(js=>{
-				const data = html + '<script>'+js+'</script>';
+				const data = `<!--[ ${new Date().toUTCString()} ]-->\n`+
+					html + '<script>'+js+'</script>';
 				self.setState({html:data});
 				if(callback) callback();
 			})
@@ -136,10 +136,17 @@ export default class App extends React.Component {
 							html: this.state.html,
 							baseUrl: 'http://localhost'
 						}}
+						originWhitelist={["*"]}
 						
+						mixedContentMode="always"
+						domStorageEnabled={true}
 						sharedCookiesEnabled={true}
-						allowUniversalAccessFromFileURLs={true}
+								
+						allowingReadAccessToURL={true}
 						allowFileAccessFromFileURLs={true}
+						allowUniversalAccessFromFileURLs={true}
+						
+						// If true, this will allow access to the file system via file:// URI's.
 						allowFileAccess={true}
 						
 						startInLoadingState={true}

@@ -132,11 +132,12 @@ export default class App extends React.Component {
 						allowFileAccessFromFileURLs={true}
 						allowUniversalAccessFromFileURLs={true}
 						
+						// If true, this will allow access to the file system via file:// URI's.
+						allowFileAccess={true}
+						
 						allowsInlineMediaPlayback={true}
 						mediaPlaybackRequiresUserAction={true}
 						
-						// If true, this will allow access to the file system via file:// URI's.
-						allowFileAccess={true}
 						
 						//onNavigationStateChange={this.handleWebViewNavigationStateChange}
 						//onFileDownload = {this.handleWebViewFileDownload}
