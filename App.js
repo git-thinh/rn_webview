@@ -50,13 +50,12 @@ export default class App extends React.Component {
 	loadHtml = (callback) => {
 		const self = this;
 		const time = '?_=' + new Date().getTime().toString();
-		fetch(`${HOST}/index.html`+time).then(r1=>r1.text()).then(html=>{
-			fetch(`${HOST}/app.js`+time).then(r2=>r2.text()).then(js=>{
-				const data = `<!--[ ${new Date().toUTCString()} ]-->\n`+
-					html + '<script>'+js+'</script>';
-				self.setState({html:data});
-				if(callback) callback();
-			})
+		fetch(`${HOST}/index.html${time}`).then(r1=>r1.text()).then(html=>{
+			const data = `<!--[ ${new Date().toUTCString()} ]-->`+ html + 
+			`<script src="${HOST}/function.js${time}"></script>`+
+			`<script src="${HOST}/app.js${time}"></script>`;
+			self.setState({html:data});
+			if(callback) callback();
 		}).catch(error => {
       console.error('????????????????? = ',error); // catching the error and handling it the way you see fit.
     });
