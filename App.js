@@ -3,6 +3,8 @@ const HOST = 'http://chuphucben'
 //const HOST = 'http://192.168.1.50:5050'
 //const HOST = 'https://doc.iot.vn/api/curl?url=https://rn_webview_html.thinhifis3199.workers.dev'
 
+const BASE_URL = 'http://localhost'
+
 import React from "react";
 import {
 	StatusBar,
@@ -33,7 +35,7 @@ export default class App extends React.Component {
 		this.state = {			
 			html: `<style type="text/css">body {background-color: #000;}</style>`,
 			
-			userAgent: '',
+			userAgent: 'Mozilla/5.0 (Linux; Android 11; TECNO KG5k) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Mobile Safari/537.36',
 			injectedJSBeforeLoaded: `window.__isMobiApp=true;window.__host='${HOST}';true;`,
 			injectedJS: '',
 			
@@ -133,10 +135,11 @@ export default class App extends React.Component {
 						ref={(r) => (this.webref = r)}
 						source={{ 
 							html: this.state.html,
-							baseUrl: 'http://localhost',
+							baseUrl: BASE_URL,
 							//headers: { 'my-custom-header-key': 'my-custom-header-value',},
 							//headers: { Cookie: 'cookie1=asdf; cookie2=dfasdfdas', },
 						}}
+						userAgent={this.state.userAgent}
 						originWhitelist={["*"]}
 						
 						mixedContentMode="always"
